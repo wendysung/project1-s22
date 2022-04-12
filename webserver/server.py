@@ -129,6 +129,13 @@ def index():
         names.append(result['username'])
     cursor.close()
 
+    cursor = g.conn.execute("SELECT aid FROM Accounts")
+    aid = []
+    for result in cursor:
+        # can also be accessed using result[0]
+        aid.append(result['aid'])
+    cursor.close()
+
     #
     # Flask uses Jinja templates, which is an extension to HTML where you can
     # pass data to a template and dynamically generate HTML based on the data
@@ -155,7 +162,7 @@ def index():
     #     <div>{{n}}</div>
     #     {% endfor %}
     #
-    context = dict(data=names)
+    context = dict(data=names, data2=aid)
 
     #
     # render_template looks in the templates/ folder for files.
@@ -175,7 +182,17 @@ def index():
 
 @app.route('/another')
 def another():
-    return render_template("anotherfile.html")
+    cursor = g.conn.execute("SELECT recipe_id, title FROM Recipe_Created")
+    recipes = {"recipe_id": [], "title": []}
+    for recipe_id, title in cursor:
+        # can also be accessed using result[0]
+        recipes["recipe_id"].append(recipe_id)
+        recipes["title"].append(title)
+    cursor.close()
+
+    context = dict(recipes=recipes)
+
+    return render_template("anotherfile.html", **context)
 
 
 # Example of adding new data to the database
