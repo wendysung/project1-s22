@@ -60,19 +60,11 @@ engine.execute("""CREATE TABLE IF NOT EXISTS test (
 engine.execute(
     """INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
 
-<<<<<<< HEAD
-
-
-
-
-
-=======
->>>>>>> efe8f7899beaaa7b96c8f295663e2db8efd64ce9
 
 @app.before_request
 def before_request():
     """
-    This function is run at the beginning of every web request 
+    This function is run at the beginning of every web request
     (every time you enter an address in the web browser).
     We use it to setup a database connection that can be used throughout the request
 
@@ -130,36 +122,6 @@ def index():
     #
     # example of a database query
     #
-<<<<<<< HEAD
-p
-    #
-    # Flask uses Jinja templates, which is an extension to HTML where you can
-    # pass data to a template and dynamically generate HTML based on the data
-    # (you can think of it as simple PHP)
-    # documentation: https://realpython.com/blog/python/primer-on-jinja-templating/
-    #
-    # You can see an example template in templates/index.html
-    #
-    # context are the variables that are passed to the template.
-    # for example, "data" key in the context variable defined below will be
-    # accessible as a variable in index.html:
-    #
-    #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-    #     <div>{{data}}</div>
-    #
-    #     # creates a <div> tag for each element in data
-    #     # will print:
-    #     #
-    #     #   <div>grace hopper</div>
-    #     #   <div>alan turing</div>
-    #     #   <div>ada lovelace</div>
-    #     #
-    #     {% for n in data %}
-    #     <div>{{n}}</div>
-    #     {% endfor %}
-    #
-    context = dict(data=names)
-=======
 
     cursor = g.conn.execute("SELECT recipe_id, title FROM Recipe_Created")
     list1 = []
@@ -172,7 +134,6 @@ p
     cursor.close()
 
     mylist = zip(list1, list2)
->>>>>>> efe8f7899beaaa7b96c8f295663e2db8efd64ce9
 
     context = dict(recipes=mylist)
 
