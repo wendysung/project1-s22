@@ -60,13 +60,10 @@ engine.execute("""CREATE TABLE IF NOT EXISTS test (
 engine.execute(
     """INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
 
-engine.execute("""DROP TABLE IF EXISTS Accounts;""")
-engine.execute("""CREATE TABLE IF NOT EXISTS Accounts (
-    aid int PRIMARY KEY,
-	  username text	UNIQUE NOT NULL
-);""")
-engine.execute("""INSERT INTO Accounts VALUES (1,'wendy'), (2,'sabrina2232'), (3,'eugene4111'), (4,'jake_hi'), 
-(5,'christine'), (6,'nicole.zhang'),(7,'james_86'), (8,'hanna6'), (9,'yufa'), (10,'david');""")
+
+
+
+
 
 
 @app.before_request
@@ -130,12 +127,7 @@ def index():
     #
     # example of a database query
     #
-    cursor = g.conn.execute("SELECT name FROM test")
-    names = []
-    for result in cursor:
-        names.append(result['name'])  # can also be accessed using result[0]
-    cursor.close()
-
+p
     #
     # Flask uses Jinja templates, which is an extension to HTML where you can
     # pass data to a template and dynamically generate HTML based on the data
