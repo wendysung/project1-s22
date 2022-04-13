@@ -60,11 +60,14 @@ engine.execute("""CREATE TABLE IF NOT EXISTS test (
 engine.execute(
     """INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
 
+<<<<<<< HEAD
 
 
 
 
 
+=======
+>>>>>>> efe8f7899beaaa7b96c8f295663e2db8efd64ce9
 
 @app.before_request
 def before_request():
@@ -127,6 +130,7 @@ def index():
     #
     # example of a database query
     #
+<<<<<<< HEAD
 p
     #
     # Flask uses Jinja templates, which is an extension to HTML where you can
@@ -155,26 +159,96 @@ p
     #     {% endfor %}
     #
     context = dict(data=names)
+=======
 
-    #
-    # render_template looks in the templates/ folder for files.
-    # for example, the below file reads template/index.html
-    #
+    cursor = g.conn.execute("SELECT recipe_id, title FROM Recipe_Created")
+    list1 = []
+    list2 = []
+    recipes = {"recipe_id": [], "title": []}
+    for recipe_id, title in cursor:
+        # can also be accessed using result[0]
+        list1.append(recipe_id)
+        list2.append(title)
+    cursor.close()
+
+    mylist = zip(list1, list2)
+>>>>>>> efe8f7899beaaa7b96c8f295663e2db8efd64ce9
+
+    context = dict(recipes=mylist)
+
     return render_template("index.html", **context)
-
-#
-# This is an example of a different path.  You can see it at
-#
-#     localhost:8111/another
-#
-# notice that the functio name is another() rather than index()
-# the functions for each app.route needs to have different names
-#
 
 
 @app.route('/another')
 def another():
+
     return render_template("anotherfile.html")
+
+
+@app.route('/recipe/<n>')
+def recipe(n):
+
+    print(n)
+
+    query = "SELECT Recipe_Created.aid, title, recipe_id, description, time_posted, username FROM Recipe_Created, Accounts WHERE Recipe_Created.aid=Accounts.aid AND recipe_id = '" + n + "'"
+
+    cursor = g.conn.execute(query)
+    aid = []
+    title = []
+    recipe_id = []
+    description = []
+    time_posted = []
+    recipe_user = []
+    for result in cursor:
+        # can also be accessed using result[0]
+        title.append(result['title'])
+        recipe_id.append(result['recipe_id'])
+        aid.append(result['aid'])
+        description.append(result['description'])
+        time_posted.append(result['time_posted'])
+        recipe_user.append(result['username'])
+    cursor.close()
+
+    query2 = "SELECT Recipe_contains.aid, comment_id, comment, username FROM Recipe_contains, Accounts where Recipe_contains.aid=Accounts.aid AND recipe_id = " + n
+
+    cursor = g.conn.execute(query2)
+    comment_aid = []
+    comment_id = []
+    comment = []
+    username = []
+
+    for a, c_id, c, u in cursor:
+        # can also be accessed using result[0]
+        comment_aid.append(a)
+        comment_id.append(c_id)
+        comment.append(c)
+        username.append(u)
+    cursor.close()
+
+    print(query2)
+
+    query3 = "SELECT Has_tags.tag_id, tags.category FROM Has_tags, Recipe_Created, tags WHERE Has_tags.recipe_id =Recipe_Created.recipe_id AND Has_tags.tag_id = Tags.tag_id AND Has_tags.recipe_id =" + n
+
+    cursor = g.conn.execute(query3)
+    tag_id = []
+    category = []
+
+    for t, cat in cursor:
+        # can also be accessed using result[0]
+        tag_id.append(t)
+        category.append(cat)
+    cursor.close()
+
+    recipe = zip(title, recipe_id, aid,
+                 description, time_posted, recipe_user)
+
+    comment = zip(comment_aid, comment_id, comment, username)
+
+    tag = zip(tag_id, category)
+
+    context = dict(recipe=recipe, comment=comment, tag=tag)
+
+    return render_template("recipe.html", **context)
 
 
 # Example of adding new data to the database

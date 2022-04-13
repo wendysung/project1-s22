@@ -1,0 +1,50 @@
+<html>
+  <style>
+    body{ 
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+
+
+
+  <div> 
+    {% for title, recipe_id, aid,
+        description, time_posted, recipe_user in recipe %}
+    <h1>{{title}}</h1>
+    <div>recipe by {{recipe_user}}</div>
+    <div>time posted: {{time_posted}}</div>
+    <br>
+    <div>description: {{description}}</div>
+
+    <br>
+    {% endfor %}
+
+  </div>
+
+  <div>
+    <h3>Tags:</h3>
+    {% for tag_id, category in tag %}
+        {{category}} <br>
+
+    {% endfor %}
+  </div>
+
+  <br>
+
+  <h3>Comments</h3>
+
+  <div>
+    {% for user_id, comment_id, text, username in comment %}
+        <div>{{username}} : "{{text}} "</div>
+    {% endfor %}
+  </div>
+
+
+</body>
+
+
+</html>

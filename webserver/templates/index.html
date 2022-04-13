@@ -8,16 +8,19 @@
 
 
 <body>
-  <h1>Recipe Finder</h1>
-  <div>{{data}}</div>
+  <h1>Recipe Lists</h1>
 
   <div>
-    {% for n in data %}
-    <div>{{n}}</div>
+    {% for i ,j in recipes%}
+          <a href="/recipe/{{i}}">{{j}}</a>
+          <br>
     {% endfor %}
   </div>
 
-<p><a href="/another">Go to the other page</a></p>
+
+
+  <a href="url">login page</a>
+
 
 <form method="POST" action="/add">
 <p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
