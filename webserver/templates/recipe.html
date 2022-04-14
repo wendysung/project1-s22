@@ -11,19 +11,19 @@
 
 
 
-  <div> 
-    {% for title, recipe_id, aid,
-        description, time_posted, recipe_user in recipe %}
-    <h1>{{title}}</h1>
-    <div>recipe by {{recipe_user}}</div>
-    <div>time posted: {{time_posted}}</div>
-    <br>
-    <div>description: {{description}}</div>
+    <div> 
+        {% for title, recipe_id, aid,
+            description, time_posted, recipe_user in recipe %}
+            <h1>{{title}}</h1>
+            <div>recipe by {{recipe_user}}</div>
+            <div>time posted: {{time_posted}}</div>
+            <br>
+            <div>description: {{description}}</div>
 
-    <br>
-    {% endfor %}
+        <br>
+        {% endfor %}
 
-  </div>
+    </div>
 
   <div>
     <h3>Tags:</h3>
@@ -42,6 +42,20 @@
         <div>{{username}} : "{{text}} "</div>
     {% endfor %}
   </div>
+
+  <div>
+    
+  </div>
+  <div> 
+    
+        <form method="POST" action="{{recipeid[0]}}/addComment">
+            <p>Enter Comment <input type="text" name="comment"> 
+            <input type="submit" value="Add"></p>
+        </form>
+  </div>
+  
+
+ 
 
 
 </body>

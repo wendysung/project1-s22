@@ -6,7 +6,6 @@
     }
   </style>
 
-
 <body>
   <h1>Recipe Lists</h1>
 
@@ -17,7 +16,6 @@
     {% endfor %}
   </div>
 
-
   <a href="/login">login page</a>
 
   <div>
@@ -27,6 +25,7 @@
     {% endfor %}
   </div>
 
+  <h3>Add a new recipe</h3>
 
 <form method="POST" action="/addRecipe">
   <p>Recipe Name: <input type="text" name="recipeName"> 
@@ -39,6 +38,14 @@
 
   <h1>General List</h1>
   <a href="/generalList">general list</a>
+
+  <h3>Add a new list</h3>
+
+  <form method="POST" action="/addList">
+    <p>List Name: <input type="text" name="listName"> 
+    <p>Favorite <input type="checkbox" name="favorite">
+    <input type="submit" value="Add"></p>
+  </form>
 
   <h1>Following/Follower List</h1>
   <a href="/followings">followings</a>

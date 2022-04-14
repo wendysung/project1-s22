@@ -16,9 +16,10 @@ Read about it online.
 """
 
 import os
+from wsgiref.util import request_uri
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, request, render_template, g, redirect, Response, url_for
 from datetime import datetime
 
 tmpl_dir = os.path.join(os.path.dirname(
@@ -146,6 +147,7 @@ def another():
 
     return render_template("anotherfile.html")
 
+
 @app.route('/recipe/<n>')
 def recipe(n):
 
@@ -207,9 +209,10 @@ def recipe(n):
 
     tag = zip(tag_id, category)
 
-    context = dict(recipe=recipe, comment=comment, tag=tag)
+    context = dict(recipe=recipe, comment=comment, tag=tag, recipeid=recipe_id)
 
     return render_template("recipe.html", **context)
+
 
 @app.route('/favorites')
 def favorites():
@@ -239,8 +242,8 @@ def favorites():
     context = dict(name=name, idList = idList, recipeIds = recipeIds, titles = titles)
 
 
-
     return render_template("favorites.html", **context)
+
 
 @app.route('/generalList')
 def generalList():
@@ -260,11 +263,12 @@ def generalList():
 
     context = dict(name=name)
 
-
     return render_template("favorites.html", **context)
 
 
 # FOLLOWINGS QUERY THINGY
+
+
 @app.route('/followings')
 def followings():
 
@@ -272,25 +276,36 @@ def followings():
 
 
     cursor = g.conn.execute(query5)
-    #cursor.execute(query)
-    #row = cursor.fetchone()
+    # cursor.execute(query)
+    # row = cursor.fetchone()
     account = []
     follower = []
-    #parse through favorite variable
-    #if favorite == false
+    # parse through favorite variable
+    # if favorite == false
     for aUsername, f_aid in cursor:
         # can also be accessed using result[0]
         account.append(aUsername)
         follower.append(f_aid)
+<<<<<<< HEAD
     cursor.close()
     print(account)
     print(follower)
 
     list = zip(account,follower)
     context = dict(list=list)
+=======
+        cursor.close()
+        # print(query)
+>>>>>>> 2b6de5be03a82f201e30ead834eef1ac9812343a
 
 
+<<<<<<< HEAD
     return render_template("followings.html", **context)
+=======
+
+@app.route('/login')
+def login():
+>>>>>>> 2b6de5be03a82f201e30ead834eef1ac9812343a
 
 
 @app.route('/<id>')
@@ -317,6 +332,7 @@ def listPages(id):
 
     #return render_template("login.html")
 
+
 @app.route('/login/addUser',  methods=['POST'])
 def addUser():
     name = request.form['hi']
@@ -324,10 +340,12 @@ def addUser():
 
     cmd = 'INSERT INTO Accounts VALUES (:name1), (:name2)'
 
-    g.conn.execute(text(cmd), name1= 100, name2=name)
+    g.conn.execute(text(cmd), name1=100, name2=name)
     return render_template("login.html")
 
 # Example of adding new data to the database
+
+
 @app.route('/add', methods=['POST'])
 def add():
     name = request.form['name']
@@ -337,9 +355,12 @@ def add():
     return redirect('/')
 
 
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> 2b6de5be03a82f201e30ead834eef1ac9812343a
 @app.route('/addRecipe', methods=['POST'])
 def addRecipe():
     name = request.form['recipeName']
@@ -363,10 +384,59 @@ def addRecipe():
     return redirect('/')
 
 
+<<<<<<< HEAD
 @app.route('/login')
 def login():
     return render_template("login.html")
 
+=======
+@app.route('/recipe/<n>/addComment', methods=['POST', 'GET'])
+def addComment(n):
+    comment = request.form['comment']
+    print(comment)
+
+    count = 0
+    query = "SELECT count(*) FROM Recipe_contains"
+    cursor = g.conn.execute(query)
+    for num in cursor:
+        print(num[0])  # count of recipes
+        count = num[0]
+
+    # default user is 1 (wendy)
+
+    g.conn.execute(text(
+        "INSERT INTO Recipe_contains VALUES (1, (:r), (:c), (:com))"), r=n, c=count+1, com=comment)
+
+    return redirect(url_for('recipe', n=n))
+
+
+@app.route('/addList', methods=['POST'])
+def addList():
+    name = request.form['listName']
+    favorite = request.form['favorite']
+    print(name)
+    print(favorite)
+
+    isfavorite = False
+
+    if favorite:
+        isfavorite = True
+
+    print(isfavorite)
+
+    count = 0
+    cursor = g.conn.execute("SELECT count(*) FROM Create_list")
+    for n in cursor:
+        print(n[0])  # count of lists
+        count = n[0]
+
+    # default user is 1 (wendy)
+
+    g.conn.execute(text(
+        "INSERT INTO Create_list VALUES ((:c), (:title), (:fav), 1)"), c=count+1, title=name, fav=isfavorite)
+
+    return redirect(url_for('index'))
+>>>>>>> 2b6de5be03a82f201e30ead834eef1ac9812343a
 
 
 if __name__ == "__main__":
