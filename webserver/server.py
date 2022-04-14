@@ -251,25 +251,28 @@ def list(n):
 @app.route('/followings')
 def followings():
 
-    query5 = "SELECT Accounts.username, Follow.aid_2 FROM Accounts, Follow WHERE Accounts.aid = Follow.aid_1"
+    query5 = "SELECT A.username, F.aid_2, A1.username FROM Accounts as A, Follow as F, Accounts as A1 WHERE A.aid = F.aid_1 AND F.aid_2 = A1.aid"
 
     cursor = g.conn.execute(query5)
     # cursor.execute(query)
     # row = cursor.fetchone()
     account = []
     follower = []
+    followerName = []
     # parse through favorite variable
     # if favorite == false
-    for aUsername, f_aid in cursor:
+    for aUsername, f_aid, fName in cursor:
         # can also be accessed using result[0]
         account.append(aUsername)
         follower.append(f_aid)
+        followerName.append(fName)
 
     cursor.close()
     print(account)
     print(follower)
+    print(followerName)
 
-    list = zip(account, follower)
+    list = zip(account, followerName)
     context = dict(list=list)
 
     return render_template("followings.html", **context)
