@@ -261,7 +261,7 @@ def followings():
 
     cursor = g.conn.execute(query5)
     # cursor.execute(query)
-    #row = cursor.fetchone()
+    # row = cursor.fetchone()
     account = []
     follower = []
     # parse through favorite variable
@@ -345,6 +345,34 @@ def addComment(n):
         "INSERT INTO Recipe_contains VALUES (1, (:r), (:c), (:com))"), r=n, c=count+1, com=comment)
 
     return redirect(url_for('recipe', n=n))
+
+
+@app.route('/addList', methods=['POST'])
+def addList():
+    name = request.form['listName']
+    favorite = request.form['favorite']
+    print(name)
+    print(favorite)
+
+    isfavorite = False
+
+    if favorite:
+        isfavorite = True
+
+    print(isfavorite)
+
+    count = 0
+    cursor = g.conn.execute("SELECT count(*) FROM Create_list")
+    for n in cursor:
+        print(n[0])  # count of lists
+        count = n[0]
+
+    # default user is 1 (wendy)
+
+    g.conn.execute(text(
+        "INSERT INTO Create_list VALUES ((:c), (:title), (:fav), 1)"), c=count+1, title=name, fav=isfavorite)
+
+    return redirect(url_for('index'))
 
 
 if __name__ == "__main__":
