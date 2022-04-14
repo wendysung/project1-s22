@@ -21,9 +21,18 @@
 
   <a href="/login">login page</a>
 
+  <div>
+    {% for i in tags%}
+          {{i}}
+          <br>
+    {% endfor %}
+  </div>
 
-<form method="POST" action="/add">
-<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
+
+<form method="POST" action="/addRecipe">
+  <p>Recipe Name: <input type="text" name="recipeName"> 
+  <p>Description: <input type="text" name="description">
+  <input type="submit" value="Add"></p>
 </form>
 
 </body>
