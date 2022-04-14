@@ -5,12 +5,19 @@
     <title>Favorites List</title>
 </head>
 <body>
-    <div>
+    <!-----<div>
         {% for i in name %}
         <h1>{{i}}</h1>
         <br>
         {% endfor %}
+    </div>----->
+    <div>
+        {% for i in name %}
+        <h1><a href="/recipe/{{i}}">{{i}}</a></h1>
+        <br>
+        {% endfor %}
     </div>
+
 
 </body>
 </html>

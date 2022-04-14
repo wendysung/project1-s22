@@ -249,11 +249,13 @@ def generalList():
 
     return render_template("favorites.html", **context)
 
+
 # FOLLOWINGS QUERY THINGY
 @app.route('/followings')
 def followings():
 
-    query5 = "SELECT Accounts.username, Follows.aid_2 FROM Accounts, Follow WHERE Accounts.aid = Follows.aid_1"
+    query5 = "SELECT Accounts.username, Follow.aid_2 FROM Accounts, Follow WHERE Accounts.aid = Follow.aid_1"
+
 
     cursor = g.conn.execute(query5)
     #cursor.execute(query)
@@ -266,16 +268,40 @@ def followings():
         # can also be accessed using result[0]
         account.append(aUsername)
         follower.append(f_aid)
-        cursor.close()
-        #print(query)
+    cursor.close()
+    print(account)
+    print(follower)
+
+    list = zip(account,follower)
+    context = dict(list=list)
 
 
-    return render_template("generalList.html")
+    return render_template("followings.html", **context)
 
-@app.route('/login')
-def login():
 
-    return render_template("login.html")
+@app.route('/chinese cuisine')
+def chineseCuisine():
+
+    query7 = "SELECT recipe_id, name = 1 FROM has_recipe, create_list WHERE has_recipe.list_id = create_list.list_id"
+
+    cursor = g.conn.execute(query7)
+    name = []
+    recipeIds = []
+    for x, y in cursor:
+        recipeId.append(x)
+        name.append(y)
+    cursor.close()
+    print(name)
+
+    context = dict(name=name)
+
+
+    return render_template("chinese cuisine.html", **context)
+
+#@app.route('/login')
+#def login():
+
+    #return render_template("login.html")
 
 @app.route('/login/addUser',  methods=['POST'])
 def addUser():
@@ -297,10 +323,9 @@ def add():
     return redirect('/')
 
 
-<<<<<<< HEAD
 
 
-=======
+
 @app.route('/addRecipe', methods=['POST'])
 def addRecipe():
     name = request.form['recipeName']
@@ -327,7 +352,7 @@ def addRecipe():
 @app.route('/login')
 def login():
     return render_template("login.html")
->>>>>>> 6a3bd1d5faa94e075f8c44f4bcba352f64253736
+
 
 
 if __name__ == "__main__":
