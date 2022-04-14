@@ -19,6 +19,7 @@ import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
+from datetime import datetime
 
 tmpl_dir = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'templates')
@@ -296,8 +297,37 @@ def add():
     return redirect('/')
 
 
+<<<<<<< HEAD
 
 
+=======
+@app.route('/addRecipe', methods=['POST'])
+def addRecipe():
+    name = request.form['recipeName']
+    description = request.form['description']
+    print(name)
+    print(description)
+
+    count = 0
+    cursor = g.conn.execute("SELECT count(*) FROM Recipe_Created")
+    for n in cursor:
+        print(n[0])  # count of recipes
+        count = n[0]
+
+    time = datetime.now()
+
+    # default user is 1 (wendy)
+
+    g.conn.execute(text(
+        "INSERT INTO Recipe_Created VALUES (1, (:c), (:title), (:descript), (:timenow))"), c=count+1, title=name, descript=description, timenow=time)
+
+    return redirect('/')
+
+
+@app.route('/login')
+def login():
+    return render_template("login.html")
+>>>>>>> 6a3bd1d5faa94e075f8c44f4bcba352f64253736
 
 
 if __name__ == "__main__":
