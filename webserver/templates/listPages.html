@@ -5,13 +5,13 @@
     <title>Chinese Cuisine List</title>
 </head>
 <body>
-    <div>
-        {% for i in account %}
-        <h1>{{i}}</h1>
-        <br>
+    <h1>"{{name[0][0]}}" Contains:</h1>
+    <div> 
+        {% for list_id, recipe_id, title in list %}
+            <a href="/recipe/{{recipe_id}}">{{title}}</a>
+            <br>
         {% endfor %}
     </div>
-
 
 </body>
 </html>

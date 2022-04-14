@@ -34,18 +34,50 @@
 </form>
 
   <h1>Favorite List</h1>
-  <a href="/favorites">favorites list</a>
+  <div>
+    {% for i ,j, x in favoriteList%}
+          <a href="/list/{{i}}">{{j}}</a>
+          <br>
+    {% endfor %}
+  </div>
+ 
 
   <h1>General List</h1>
-  <a href="/generalList">general list</a>
+  <div>
+    {% for i ,j, x in genList%}
+          <a href="/list/{{i}}">{{j}}</a>
+          <br>
+    {% endfor %}
+  </div>
 
   <h3>Add a new list</h3>
 
   <form method="POST" action="/addList">
     <p>List Name: <input type="text" name="listName"> 
-    <p>Favorite <input type="checkbox" name="favorite">
+    
+    <div>
+      <b>pick a type of list:</b>
+      <br>
+      <input type="radio" id="favorite" name="listtype" value="favorite"
+               checked>
+      <label for="favorite">favorite</label>
+    </div>
+    <div>
+      <input type="radio" id="general" name="listtype" value="general">
+      <label for="general">general</label>
+    </div>
+      
+  
+    <b>Select recipes the list contains:</b>
+    <div>
+      {% for x,y in recipes2%}
+              <p>{{y}} <input type="checkbox" name="recipes" value="{{x}}">
+        {% endfor %}
+    </div>
     <input type="submit" value="Add"></p>
   </form>
+
+
 
   <h1>Following/Follower List</h1>
   <a href="/followings">followings</a>

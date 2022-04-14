@@ -54,13 +54,13 @@ engine = create_engine(DATABASEURI)
 
 
 # Here we create a test table and insert some values in it
-engine.execute("""DROP TABLE IF EXISTS test;""")
-engine.execute("""CREATE TABLE IF NOT EXISTS test (
-  id serial,
-  name text
-);""")
-engine.execute(
-    """INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
+#engine.execute("""DROP TABLE IF EXISTS test;""")
+# engine.execute("""CREATE TABLE IF NOT EXISTS test (
+#  id serial,
+#  name text
+# );""")
+# engine.execute(
+#    """INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
 
 
 @app.before_request
@@ -93,59 +93,59 @@ def teardown_request(exception):
         pass
 
 
-#
-# @app.route is a decorator around index() that means:
-#   run index() whenever the user tries to access the "/" path using a GET request
-#
-# If you wanted the user to go to e.g., localhost:8111/foobar/ with POST or GET then you could use
-#
-#       @app.route("/foobar/", methods=["POST", "GET"])
-#
-# PROTIP: (the trailing / in the path is important)
-#
-# see for routing: http://flask.pocoo.org/docs/0.10/quickstart/#routing
-# see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
-#
 @app.route('/')
 def index():
-    """
-    request is a special object that Flask provides to access web request information:
-
-    request.method:   "GET" or "POST"
-    request.form:     if the browser submitted a form, this contains the data in the form
-    request.args:     dictionary of URL arguments e.g., {a:1, b:2} for http://localhost?a=1&b=2
-
-    See its API: http://flask.pocoo.org/docs/0.10/api/#incoming-request-data
-    """
-
     # DEBUG: this is debugging code to see what request looks like
     print(request.args)
-
-    #
-    # example of a database query
-    #
 
     cursor = g.conn.execute("SELECT recipe_id, title FROM Recipe_Created")
     list1 = []
     list2 = []
-    recipes = {"recipe_id": [], "title": []}
+
     for recipe_id, title in cursor:
-        # can also be accessed using result[0]
         list1.append(recipe_id)
         list2.append(title)
     cursor.close()
 
-    mylist = zip(list1, list2)
+    queryfav = "SELECT list_id, name, aid FROM create_list WHERE favorite = True"
 
-    context = dict(recipes=mylist)
+    cursor = g.conn.execute(queryfav)
+
+    listid = []
+    name = []
+    aid = []
+
+    for a, b, c in cursor:
+        listid.append(a)
+        name.append(b)
+        aid.append(c)
+    cursor.close()
+
+    queryGeneral = "SELECT list_id, name, aid FROM create_list WHERE favorite = False"
+
+    cursor = g.conn.execute(queryGeneral)
+
+    gen_listid = []
+    gen_name = []
+    gen_aid = []
+
+    for a, b, c in cursor:
+        gen_listid.append(a)
+        gen_name.append(b)
+        gen_aid.append(c)
+    cursor.close()
+
+    print(list1)
+    print(list2)
+    mylist = zip(list1, list2)
+    mylist2 = zip(list1, list2)
+    favoriteList = zip(listid, name, aid)
+    genList = zip(gen_listid, gen_name, gen_aid)
+
+    context = dict(recipes2=mylist2, recipes=mylist,
+                   favoriteList=favoriteList, genList=genList)
 
     return render_template("index.html", **context)
-
-
-@app.route('/another')
-def another():
-
-    return render_template("anotherfile.html")
 
 
 @app.route('/recipe/<n>')
@@ -163,7 +163,6 @@ def recipe(n):
     time_posted = []
     recipe_user = []
     for result in cursor:
-        # can also be accessed using result[0]
         title.append(result['title'])
         recipe_id.append(result['recipe_id'])
         aid.append(result['aid'])
@@ -181,7 +180,6 @@ def recipe(n):
     username = []
 
     for a, c_id, c, u in cursor:
-        # can also be accessed using result[0]
         comment_aid.append(a)
         comment_id.append(c_id)
         comment.append(c)
@@ -197,7 +195,6 @@ def recipe(n):
     category = []
 
     for t, cat in cursor:
-        # can also be accessed using result[0]
         tag_id.append(t)
         category.append(cat)
     cursor.close()
@@ -214,57 +211,39 @@ def recipe(n):
     return render_template("recipe.html", **context)
 
 
-@app.route('/favorites')
-def favorites():
+@app.route('/list/<n>')
+def list(n):
 
-    query4 = "SELECT title, name, create_list.list_id,favorite, has_recipe.recipe_id FROM create_list, has_recipe, recipe_created WHERE create_list.list_id = has_recipe.list_id AND recipe_created.recipe_id = has_recipe.recipe_id"
+    print(n)
 
-    cursor = g.conn.execute(query4)
+    query = "SELECT has_recipe.list_id, has_recipe.recipe_id, title FROM has_recipe, recipe_created WHERE list_id = " + \
+        n + " AND has_recipe.recipe_id = recipe_created.recipe_id"
 
-    name = []
-    idList = []
-    recipeIds = []
-    titles = []
-    indexArray = []
-    i = 0
-    for title, x, y,z, rid in cursor:
-        if z:
-            name.append(x)
-            idList.append(y)
-            recipeIds.append(rid)
-            titles.append(title)
-            indexArray.append(i)
-            i = i + 1
+    cursor = g.conn.execute(query)
+    list_id = []
+    recipe_id = []
+    title = []
+
+    for a, b, c in cursor:
+        list_id.append(a)
+        recipe_id.append(b)
+        title.append(c)
+
     cursor.close()
-    print(name)
-    print(titles)
 
-    context = dict(name=name, idList = idList, recipeIds = recipeIds, titles = titles)
-
-
-    return render_template("favorites.html", **context)
-
-
-@app.route('/generalList')
-def generalList():
-
-    query5 = "SELECT list_id, name,favorite FROM create_list"
-
-    cursor = g.conn.execute(query5)
-
+    listnameQuery = "SELECT name FROM create_list WHERE list_id = " + n
+    cursor = g.conn.execute(listnameQuery)
     name = []
-    listIds = []
-    for x, y,z in cursor:
-        if not z:
-            name.append(x)
-            listIds.append(y)
-    cursor.close()
+    for x in cursor:
+        name.append(x)
+
+    list = zip(list_id, recipe_id, title)
+    print(title)
     print(name)
 
-    context = dict(name=name)
+    context = dict(list=list, name=name)
 
-    return render_template("favorites.html", **context)
-
+    return render_template("listPages.html", **context)
 
 # FOLLOWINGS QUERY THINGY
 
@@ -273,7 +252,6 @@ def generalList():
 def followings():
 
     query5 = "SELECT Accounts.username, Follow.aid_2 FROM Accounts, Follow WHERE Accounts.aid = Follow.aid_1"
-
 
     cursor = g.conn.execute(query5)
     # cursor.execute(query)
@@ -286,51 +264,15 @@ def followings():
         # can also be accessed using result[0]
         account.append(aUsername)
         follower.append(f_aid)
-<<<<<<< HEAD
+
     cursor.close()
     print(account)
     print(follower)
 
-    list = zip(account,follower)
+    list = zip(account, follower)
     context = dict(list=list)
-=======
-        cursor.close()
-        # print(query)
->>>>>>> 2b6de5be03a82f201e30ead834eef1ac9812343a
 
-
-<<<<<<< HEAD
     return render_template("followings.html", **context)
-=======
-
-@app.route('/login')
-def login():
->>>>>>> 2b6de5be03a82f201e30ead834eef1ac9812343a
-
-
-@app.route('/<id>')
-def listPages(id):
-
-    query7 = "SELECT list_id = id, name, FROM has_recipe, create_list WHERE has_recipe.list_id = create_list.list_id"
-
-    cursor = g.conn.execute(query7)
-    name = []
-    recipeIds = []
-    for x, y in cursor:
-        recipeId.append(x)
-        name.append(y)
-    cursor.close()
-    print(name)
-
-    context = dict(name=name)
-
-
-    return render_template("chinese cuisine.html", **context)
-
-#@app.route('/login')
-#def login():
-
-    #return render_template("login.html")
 
 
 @app.route('/login/addUser',  methods=['POST'])
@@ -355,12 +297,6 @@ def add():
     return redirect('/')
 
 
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> 2b6de5be03a82f201e30ead834eef1ac9812343a
 @app.route('/addRecipe', methods=['POST'])
 def addRecipe():
     name = request.form['recipeName']
@@ -384,12 +320,11 @@ def addRecipe():
     return redirect('/')
 
 
-<<<<<<< HEAD
 @app.route('/login')
 def login():
     return render_template("login.html")
 
-=======
+
 @app.route('/recipe/<n>/addComment', methods=['POST', 'GET'])
 def addComment(n):
     comment = request.form['comment']
@@ -413,14 +348,18 @@ def addComment(n):
 @app.route('/addList', methods=['POST'])
 def addList():
     name = request.form['listName']
-    favorite = request.form['favorite']
+    type = request.form['listtype']
+    recipes = request.form.getlist('recipes')
     print(name)
-    print(favorite)
+    print(type)
+    print(recipes)
 
     isfavorite = False
 
-    if favorite:
+    if type == "favorite":
         isfavorite = True
+    else:
+        isfavorite = False
 
     print(isfavorite)
 
@@ -432,11 +371,17 @@ def addList():
 
     # default user is 1 (wendy)
 
+    count = count+1
+
     g.conn.execute(text(
-        "INSERT INTO Create_list VALUES ((:c), (:title), (:fav), 1)"), c=count+1, title=name, fav=isfavorite)
+        "INSERT INTO Create_list VALUES ((:c), (:title), (:fav), 1)"), c=count, title=name, fav=isfavorite)
+
+    for i in recipes:
+        print(i)
+        g.conn.execute(text(
+            "INSERT INTO Has_recipe VALUES ((:list_id), (:recipe_id))"), list_id=count, recipe_id=i)
 
     return redirect(url_for('index'))
->>>>>>> 2b6de5be03a82f201e30ead834eef1ac9812343a
 
 
 if __name__ == "__main__":
