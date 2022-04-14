@@ -214,18 +214,30 @@ def recipe(n):
 @app.route('/favorites')
 def favorites():
 
-    query4 = "SELECT name,favorite FROM create_list"
+    query4 = "SELECT title, name, create_list.list_id,favorite, has_recipe.recipe_id FROM create_list, has_recipe, recipe_created WHERE create_list.list_id = has_recipe.list_id AND recipe_created.recipe_id = has_recipe.recipe_id"
 
     cursor = g.conn.execute(query4)
 
     name = []
-    for x, y in cursor:
-        if y:
+    idList = []
+    recipeIds = []
+    titles = []
+    indexArray = []
+    i = 0
+    for title, x, y,z, rid in cursor:
+        if z:
             name.append(x)
+            idList.append(y)
+            recipeIds.append(rid)
+            titles.append(title)
+            indexArray.append(i)
+            i = i + 1
     cursor.close()
     print(name)
+    print(titles)
 
-    context = dict(name=name)
+    context = dict(name=name, idList = idList, recipeIds = recipeIds, titles = titles)
+
 
 
     return render_template("favorites.html", **context)
@@ -233,14 +245,16 @@ def favorites():
 @app.route('/generalList')
 def generalList():
 
-    query5 = "SELECT name,favorite FROM create_list"
+    query5 = "SELECT list_id, name,favorite FROM create_list"
 
     cursor = g.conn.execute(query5)
 
     name = []
-    for x, y in cursor:
-        if not y:
+    listIds = []
+    for x, y,z in cursor:
+        if not z:
             name.append(x)
+            listIds.append(y)
     cursor.close()
     print(name)
 
@@ -279,10 +293,10 @@ def followings():
     return render_template("followings.html", **context)
 
 
-@app.route('/chinese cuisine')
-def chineseCuisine():
+@app.route('/<id>')
+def listPages(id):
 
-    query7 = "SELECT recipe_id, name = 1 FROM has_recipe, create_list WHERE has_recipe.list_id = create_list.list_id"
+    query7 = "SELECT list_id = id, name, FROM has_recipe, create_list WHERE has_recipe.list_id = create_list.list_id"
 
     cursor = g.conn.execute(query7)
     name = []

@@ -5,15 +5,27 @@
     <title>Favorites List</title>
 </head>
 <body>
-    <!-----<div>
-        {% for i in name %}
-        <h1>{{i}}</h1>
-        <br>
-        {% endfor %}
-    </div>----->
     <div>
         {% for i in name %}
-        <h1><a href="/recipe/{{i}}">{{i}}</a></h1>
+        <h1>{{i}}</h1>
+        <div>
+            {% for i in titles %}
+            <h1><a href="/listPages/{{i}}">{{i}}</a></h1>
+            <br>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    <div>
+        {% for i in titles %}
+        <h1><a href="/listPages/{{i}}">{{i}}</a></h1>
+        <br>
+        {% endfor %}
+    </div>
+
+    <div>
+        {% for i in idList %}
+        <h1><a href="/listPages/{{i}}">{{i}}</a></h1>
         <br>
         {% endfor %}
     </div>
