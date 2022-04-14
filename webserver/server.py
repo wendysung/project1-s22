@@ -145,7 +145,6 @@ def another():
 
     return render_template("anotherfile.html")
 
-
 @app.route('/recipe/<n>')
 def recipe(n):
 
@@ -211,6 +210,81 @@ def recipe(n):
 
     return render_template("recipe.html", **context)
 
+@app.route('/favorites')
+def favorites():
+
+    query4 = "SELECT name,favorite FROM create_list"
+
+    cursor = g.conn.execute(query4)
+
+    name = []
+    for x, y in cursor:
+        if y:
+            name.append(x)
+    cursor.close()
+    print(name)
+
+    context = dict(name=name)
+
+
+    return render_template("favorites.html", **context)
+
+@app.route('/generalList')
+def generalList():
+
+    query5 = "SELECT name,favorite FROM create_list"
+
+    cursor = g.conn.execute(query5)
+
+    name = []
+    for x, y in cursor:
+        if not y:
+            name.append(x)
+    cursor.close()
+    print(name)
+
+    context = dict(name=name)
+
+
+    return render_template("favorites.html", **context)
+
+# FOLLOWINGS QUERY THINGY
+@app.route('/followings')
+def followings():
+
+    query5 = "SELECT Accounts.username, Follows.aid_2 FROM Accounts, Follow WHERE Accounts.aid = Follows.aid_1"
+
+    cursor = g.conn.execute(query5)
+    #cursor.execute(query)
+    #row = cursor.fetchone()
+    account = []
+    follower = []
+    #parse through favorite variable
+    #if favorite == false
+    for aUsername, f_aid in cursor:
+        # can also be accessed using result[0]
+        account.append(aUsername)
+        follower.append(f_aid)
+        cursor.close()
+        #print(query)
+
+
+    return render_template("generalList.html")
+
+@app.route('/login')
+def login():
+
+    return render_template("login.html")
+
+@app.route('/login/addUser',  methods=['POST'])
+def addUser():
+    name = request.form['hi']
+    print(name)
+
+    cmd = 'INSERT INTO Accounts VALUES (:name1), (:name2)'
+
+    g.conn.execute(text(cmd), name1= 100, name2=name)
+    return render_template("login.html")
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
@@ -222,9 +296,8 @@ def add():
     return redirect('/')
 
 
-@app.route('/login')
-def login():
-    return render_template("login.html")
+
+
 
 
 if __name__ == "__main__":

@@ -3,6 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Login Page</title>
+
+    <h1>Some famous Computer Scientists</h1>
+    <div>{{data}}</div>
+
+    <div>
+        {% for n in data %}
+        <div>{{n}}</div>
+        {% endfor %}
+    </div>
+
+    <p><a href="/another">Go to the other page</a></p>
+
+    <form method="POST" action="/login/addUser">
+        <p>username: <input type="text" name="hi"> <input type="submit" value="Add"></p>
+    </form>
+
 </head>
 <body>
 
